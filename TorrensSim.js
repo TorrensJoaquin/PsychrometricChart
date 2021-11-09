@@ -899,9 +899,6 @@ function SetupFlowStreamSimulator(){
   class FlowStream {
     constructor() {
       this.x = Array(22).fill(0); //mol
-      this.MolarFlowByComponent = Array(22).fill(0); //mol/hr
-      this.MolarFlow = 0; //mol/hr
-      this.VolumetricFlow = 0; //m3/hr
       this.Pressure=100; //KPa
       this.Temperature=273.15; //Kelvin
       this.MolarMass=0; //g/mol

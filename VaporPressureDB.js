@@ -18,7 +18,7 @@ function RegretionByPoints( ValueX, ArrayX, ArrayY){
         if(RangeOfTheBinarySearch < 4){
             i = 255;
         }else{
-            if(ValueX > ArrayY[Middle]){
+            if(ValueX > ArrayX[Middle]){
                 Initial = Middle;
             }else{
                 Final = Middle;
