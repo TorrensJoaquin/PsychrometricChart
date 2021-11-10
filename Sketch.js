@@ -1,6 +1,9 @@
 let AirProperties = new FlowStream();
 let MassDensityAir = 0;
 let GasType = '';
+let Background;
+let IsCircleIncreasing = false;
+let SizeOfCircle = 0;
 let WaterProperties = {
     Pressure : 0,
     Temperature : 0,
@@ -12,17 +15,20 @@ let WaterProperties = {
     VolumeVapor : 0
 };
 let Screen = {
-    XCanvas: 1024,
-    YCanvas: 576,
+    XCanvas: 1360,
+    YCanvas: 768,
     Xmin: 0,
-    Xmax: 1024,
-    Ymin: 0,
-    Ymax: 576,
+    Xmax: 1360,
+    Ymin: 92,
+    Ymax: 768,
     densMin: 0,       //kg/m3
     densMax: 0.03,    //kg/m3
     tempMin: 273.15-10,  //°K
     tempMax: 273.15+55,  //°K
     SelectedHumidity : 0
+}
+function preload(){
+    Background = loadImage('Background.png');
 }
 function setup() {
     createCanvas(Screen.XCanvas, Screen.YCanvas);
@@ -39,7 +45,7 @@ function setup() {
     GasType = 'Gas de relleno sanitario';
 }
 function draw() {
-    background(220);
+    image(Background,0,0);
     // Draw iso relative humidity
     let Old = {
         Temperature: 0,
@@ -113,15 +119,25 @@ function draw() {
         // Kg H2O / Kg Aire = Screen.SelectedHumidity / (AirProperties.Density * AirProperties.MolarMass)
         if(Screen.SelectedHumidity < 1.01){
             MassDensityAir = AirProperties.Density * AirProperties.MolarMass;
-            text('Humedad Relativa: ' + (Screen.SelectedHumidity*100).toFixed(1) + ' %', 10, 15);
-            text('Humedad Absoluta: ' + (PointedDensity / MassDensityAir).toFixed(3) + ' kg agua / kg gas seco', 10, 35);
-            text('Humedad Absoluta Volumetrica: ' + PointedDensity.toFixed(3) + ' kg Agua/m3', 10, 55);
-            text('Entalpia de Vaporización: ' + (SelectedEnthalpy * PointedDensity / MassDensityAir).toFixed(2) + ' kJ/kg', 10, 75); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
-            text('Entropia de Vaporización: ' + (SelectedEntropy * PointedDensity / MassDensityAir).toFixed(2) + ' kJ/[kg K]', 10, 95); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
-            text('Temperatura: ' + (WaterProperties.Temperature-273.15).toFixed(2) + ' °C', 10, 115);
-            text('Presión: ' + AirProperties.Pressure.toFixed(1) + ' kPa', 10, 135);
-            text('Densidad: ' + MassDensityAir.toFixed(3) + ' kg/m3', 10, 155);
-            text(GasType, 10, 175);
+            text('Humedad Relativa: ' + (Screen.SelectedHumidity*100).toFixed(1) + ' %', 10, 115);
+            text('Humedad Absoluta: ' + (PointedDensity / MassDensityAir).toFixed(3) + ' kg agua / kg gas seco', 10, 135);
+            text('Humedad Absoluta Volumetrica: ' + PointedDensity.toFixed(3) + ' kg Agua/m3', 10, 155);
+            text('Entalpia de Vaporización: ' + (SelectedEnthalpy * PointedDensity / MassDensityAir).toFixed(2) + ' kJ/kg', 10, 175); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+            text('Entropia de Vaporización: ' + (SelectedEntropy * PointedDensity / MassDensityAir).toFixed(2) + ' kJ/[kg K]', 10, 195); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+            text('Temperatura: ' + (WaterProperties.Temperature-273.15).toFixed(2) + ' °C', 10, 215);
+            text('Presión: ' + AirProperties.Pressure.toFixed(1) + ' kPa', 10, 235);
+            text('Densidad: ' + MassDensityAir.toFixed(3) + ' kg/m3', 10, 255);
+            text(GasType, 10, 275);
+            line(mouseX, mouseY,mouseX, Screen.YCanvas);
+            line(Screen.XCanvas, mouseY,mouseX, mouseY);
+            if(IsCircleIncreasing){
+                SizeOfCircle = SizeOfCircle + 0.1;
+            }else{
+                SizeOfCircle = SizeOfCircle - 0.1;
+            }
+            if(SizeOfCircle > 8){IsCircleIncreasing = false}
+            if(SizeOfCircle < 0){IsCircleIncreasing = true}
+            circle(mouseX, mouseY, 13 + SizeOfCircle);
         }
     }
 }
