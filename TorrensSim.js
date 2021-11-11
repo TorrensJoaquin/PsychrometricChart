@@ -901,8 +901,8 @@ function SetupFlowStreamSimulator(){
       this.x = Array(22).fill(0); //mol
       this.Pressure=100; //KPa
       this.Temperature=273.15; //Kelvin
-      this.MolarMass=0; //g/mol
-      this.Density=0.04464; //mol/l
+      this.MolarMass=0; //g/mol or kg/kmol
+      this.Density=0.04464; //mol/l or Kmol/m3
       this.CompressibilityFactor=0;
       this.dPdD=0; // kPa/(mol-l)
       this.d2PdD2=0;
