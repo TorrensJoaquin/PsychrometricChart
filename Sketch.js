@@ -184,7 +184,6 @@ function draw(){
             WaterSaturation.Pressure = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.Pressure);
             WaterSaturation.DensityVapor = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.DensityVapor);
             Screen.SelectedHumidity = (WaterOverMouse.DensityVapor / WaterSaturation.DensityVapor);
-            Air.Pressure = 100;
             Air.Temperature = WaterOverMouse.Temperature;
             Air.CalculateDensity(1);
             // Screen.SelectedHumidity kg/m3  Air.Density kmol/m3 Air.MolarMass kg/kmol
