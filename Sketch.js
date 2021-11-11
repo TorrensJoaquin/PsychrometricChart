@@ -260,6 +260,9 @@ function AnimationsOverTheMouse(){
     if(SizeOfCircle > 8){IsCircleIncreasing = false}
     if(SizeOfCircle < 0){IsCircleIncreasing = true}
     circle(mouseX, mouseY, 13 + SizeOfCircle);
+    text((Screen.SelectedHumidity*100).toFixed(1) + ' %', mouseX + 10, mouseY - 10);
+    text((WaterOverMouse.Temperature-273.15).toFixed(2) + ' °C', mouseX + 10, Screen.YCanvas - 10);
+    text(WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', Screen.XCanvas-108, mouseY - 10);
 }
 function UpdateComponent(ComponentOfDOM){
     if(ComponentOfDOM.value()==''){
