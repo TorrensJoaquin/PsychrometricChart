@@ -1,7 +1,6 @@
 let Air = new FlowStream();
 let MassDensityAir = 0;
 let aux;
-let GasType = '';
 let Background = [];
 let webButtons = [];
 let IsCircleIncreasing = false;
@@ -100,16 +99,6 @@ function setup(){
     Air.addNitrogen(0.78);
     Air.addOxygen(.21);
     Air.addArgon(0.01);
-    GasType = 'Aire';
-    //// Landfill Gas
-    //Air.addMethane(0.5);
-    //Air.addCarbonDioxide(0.48);
-    //Air.addNitrogen(0.02);
-    //GasType = 'Gas de relleno sanitario';
-    //// Natural Gas
-    //Air.addMethane(0.5);
-    //Air.addCarbonDioxide(0.48);
-    //GasType = 'Gas Natural';
     disappearTheDOMs(true);
     FromXToDOMs();
 }
