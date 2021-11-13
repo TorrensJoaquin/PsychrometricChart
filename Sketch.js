@@ -1,5 +1,5 @@
-let Air = new FlowStream();
-let MassDensityAir = 0;
+let DryGas = new FlowStream();
+let WetGas = new FlowStream();
 let aux;
 let Background = [];
 let webButtons = [];
@@ -80,7 +80,7 @@ function setup(){
     ButtonsConfiguration();
     CreateTheXInputs();
     // DOM Inputs
-    inpPressure=createInput(Air.Pressure.toString());
+    inpPressure=createInput(DryGas.Pressure.toString());
     inpPressure.size(40,30);
     inpPressure.position(805,33);
     inpMinTemperarure=createInput(Screen.tempMinSP.toString());
@@ -96,9 +96,9 @@ function setup(){
     inpMaxDensity.size(33,15);
     inpMaxDensity.position(1303,109);
     //// Air
-    Air.addNitrogen(0.78);
-    Air.addOxygen(.21);
-    Air.addArgon(0.01);
+    DryGas.addNitrogen(0.78);
+    DryGas.addOxygen(.21);
+    DryGas.addArgon(0.01);
     disappearTheDOMs(true);
     FromXToDOMs();
 }
@@ -164,40 +164,79 @@ function draw(){
             Old.DensityScreen = New.DensityScreen;
         }
         if (mouseX > Screen.Xmin && mouseX < Screen.Xmax && mouseY > Screen.Ymin && mouseY < Screen.Ymax){
+            // Vapor where the mouse is.
             WaterOverMouse.Temperature = map(mouseX, Screen.Xmin, Screen.Xmax, Screen.tempMin, Screen.tempMax);
             WaterOverMouse.DensityVapor =map(mouseY, Screen.Ymin, Screen.Ymax, Screen.densMax, Screen.densMin);
             WaterOverMouse.molDensityVapor = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.molDensityVapor);
             WaterOverMouse.EnthalpyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
             WaterOverMouse.EntropyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EntropyVaporization);
+            // Vapor if the Relative Humidity were 100%
             WaterSaturation.Temperature=WaterOverMouse.Temperature;
             WaterSaturation.Pressure = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.Pressure);
             WaterSaturation.DensityVapor = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.DensityVapor);
             Screen.SelectedHumidity = (WaterOverMouse.DensityVapor / WaterSaturation.DensityVapor)*100;
-            Air.Temperature = WaterOverMouse.Temperature;
-            Air.CalculateDensity(1);
-            // Screen.SelectedHumidity kg/m3  Air.Density kmol/m3 Air.MolarMass kg/kmol
-            // Kg H2O / Kg Aire = kg H2O/m3 / (kmol/m3 * kg/kmol) = kg H2O/m3 / kg Aire/m3
-            // Kg H2O / Kg Aire = Screen.SelectedHumidity / (Air.Density * Air.MolarMass)
-            if(Screen.SelectedHumidity < 100.1){
-                MassDensityAir = Air.Density * Air.MolarMass;
+            // Gas without taking in account tha vapor content.
+            DryGas.Temperature = WaterOverMouse.Temperature;
+            DryGas.CalculateDensity(1);
+            DryGas.MassDensity = DryGas.Density * DryGas.MolarMass;
+            // Gas taking in account tha vapor content.
+            let AbsoluteMolarHumidity = WaterOverMouse.molDensityVapor / DryGas.Density * Screen.SelectedHumidity;
+            WetGas.Temperature = WaterOverMouse.Temperature;
+            WetGas.Pressure = DryGas.Pressure;
+            WetGas.x[1] = DryGas.x[1];
+            WetGas.x[2] = DryGas.x[2];
+            WetGas.x[3] = DryGas.x[3];
+            WetGas.x[4] = DryGas.x[4];
+            WetGas.x[5] = DryGas.x[5];
+            WetGas.x[6] = DryGas.x[6];
+            WetGas.x[7] = DryGas.x[7];
+            WetGas.x[8] = DryGas.x[8];
+            WetGas.x[9] = DryGas.x[9];
+            WetGas.x[10] = DryGas.x[10];
+            WetGas.x[11] = DryGas.x[11];
+            WetGas.x[12] = DryGas.x[12];
+            WetGas.x[13] = DryGas.x[13];
+            WetGas.x[14] = DryGas.x[14];
+            WetGas.x[15] = DryGas.x[15];
+            WetGas.x[16] = DryGas.x[16];
+            WetGas.x[17] = DryGas.x[17];
+            WetGas.x[18] = DryGas.x[18];
+            WetGas.x[19] = DryGas.x[19];
+            WetGas.x[20] = DryGas.x[20];
+            WetGas.x[21] = DryGas.x[21];
+            WetGas.addWater(AbsoluteMolarHumidity * 0.01);
+            let SumOfComponents=0;
+            for(let i=1; i <= 21; i++){
+                SumOfComponents=SumOfComponents+WetGas.x[i];
+            }
+            for(let i=1; i <= 21; i++){
+                WetGas.x[i]=WetGas.x[i]/SumOfComponents;
+            }
+            WetGas.CalculateDensity(1);
+            WetGas.MassDensity = WetGas.Density * WetGas.MolarMass;
+            //
+            if(Screen.SelectedHumidity < 100.9){
                 aux=115;
                 text('Humedad Relativa: ' + (Screen.SelectedHumidity).toFixed(1) + ' %', 10, aux);
                 aux += 20;
-                text('Humedad Absoluta: ' + (1000 * WaterOverMouse.DensityVapor / MassDensityAir).toFixed(3) + ' g agua / kg gas seco', 10, aux);
+                text('Humedad Absoluta: ' + (1000 * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(3) + ' g agua / kg gas seco', 10, aux);
                 aux += 20;
                 text('Humedad Absoluta Volumetrica: ' + WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', 10, aux);
                 aux += 20;
-                text('Humedad Absoluta Molar: ' + (WaterOverMouse.molDensityVapor / Air.Density * Screen.SelectedHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
+                text('Humedad Absoluta Molar: ' + (AbsoluteMolarHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
                 aux += 20;
-                text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / MassDensityAir).toFixed(2) + ' kJ/kg', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                //kJ/kg
+                text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / WetGas.MassDensity).toFixed(2) + ' kJ/kg', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
-                text('Entropia de Vaporización: ' + (WaterOverMouse.EntropyVaporization * WaterOverMouse.DensityVapor / MassDensityAir).toFixed(2) + ' kJ/[kg K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                text('Entropia de Vaporización: ' + (WaterOverMouse.EntropyVaporization * WaterOverMouse.DensityVapor / WetGas.MassDensity).toFixed(2) + ' kJ/[kg K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
                 text('Temperatura: ' + (WaterOverMouse.Temperature-273.15).toFixed(2) + ' °C', 10, aux);
                 aux += 20;
-                text('Presión: ' + Air.Pressure.toFixed(1) + ' kPa', 10, aux);
+                text('Presión: ' + DryGas.Pressure.toFixed(1) + ' kPa', 10, aux);
                 aux += 20;
-                text('Densidad: ' + MassDensityAir.toFixed(3) + ' kg/m3', 10, aux);
+                text('Densidad: ' + DryGas.MassDensity.toFixed(3) + ' kg/m3', 10, aux);
+                aux += 20;
+                text('Velocidad del Sonido: ' + WetGas.SpeedOfSound.toFixed(2) + ' m/s', 10, aux);
                 aux += 20;
                 text('Composición: ', 10, aux);
                 aux += 20;
@@ -231,7 +270,7 @@ function draw(){
     webButtons[2].drawMe();
 }
 function UploadTheInputs(){
-    Air.Pressure = UpdateComponent(inpPressure);
+    DryGas.Pressure = UpdateComponent(inpPressure);
     Screen.tempMinSP = UpdateComponent(inpMinTemperarure);
     Screen.tempMaxSP = UpdateComponent(inpMaxTemperarure);
     Screen.densMinSP = UpdateComponent(inpMinDensity);
@@ -256,11 +295,11 @@ function UpdateComponent(ComponentOfDOM){
     if(ComponentOfDOM.value()==''){
         return 0;
     }
-        return parseFloat(ComponentOfDOM.value());
+    return parseFloat(ComponentOfDOM.value());
 }
 function WriteElementIfExist(Name, Position){
-    if (Air.x[Position]>0){
-        text(Name + ': ' + (Air.x[Position]*100).toFixed(2) + ' %', 20, aux);
+    if (DryGas.x[Position]>0){
+        text(Name + ': ' + (DryGas.x[Position]*100).toFixed(2) + ' %', 20, aux);
         aux += 20;
     }
 }
@@ -370,7 +409,7 @@ function ButtonsConfiguration(){
         
     }
     webButtons[1].WhatShouldIDoAfterYouCallMe = function(){
-        Air.x=Array(22).fill(0);
+        DryGas.x=Array(22).fill(0);
         FromXToDOMs();
     }
     webButtons[2].WhatShouldIDoAfterYouCallMe = function(){
