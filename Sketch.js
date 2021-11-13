@@ -172,22 +172,22 @@ function draw(){
             WaterSaturation.Temperature=WaterOverMouse.Temperature;
             WaterSaturation.Pressure = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.Pressure);
             WaterSaturation.DensityVapor = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.DensityVapor);
-            Screen.SelectedHumidity = (WaterOverMouse.DensityVapor / WaterSaturation.DensityVapor);
+            Screen.SelectedHumidity = (WaterOverMouse.DensityVapor / WaterSaturation.DensityVapor)*100;
             Air.Temperature = WaterOverMouse.Temperature;
             Air.CalculateDensity(1);
             // Screen.SelectedHumidity kg/m3  Air.Density kmol/m3 Air.MolarMass kg/kmol
             // Kg H2O / Kg Aire = kg H2O/m3 / (kmol/m3 * kg/kmol) = kg H2O/m3 / kg Aire/m3
             // Kg H2O / Kg Aire = Screen.SelectedHumidity / (Air.Density * Air.MolarMass)
-            if(Screen.SelectedHumidity < 1.01){
+            if(Screen.SelectedHumidity < 100.1){
                 MassDensityAir = Air.Density * Air.MolarMass;
                 aux=115;
-                text('Humedad Relativa: ' + (Screen.SelectedHumidity*100).toFixed(1) + ' %', 10, aux);
+                text('Humedad Relativa: ' + (Screen.SelectedHumidity).toFixed(1) + ' %', 10, aux);
                 aux += 20;
                 text('Humedad Absoluta: ' + (1000 * WaterOverMouse.DensityVapor / MassDensityAir).toFixed(3) + ' g agua / kg gas seco', 10, aux);
                 aux += 20;
                 text('Humedad Absoluta Volumetrica: ' + WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', 10, aux);
                 aux += 20;
-                text('Humedad Absoluta Molar: ' + (WaterOverMouse.DensityVapor / MassDensityAir * WaterOverMouse.MolarMass / Air.MolarMass * 100).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
+                text('Humedad Absoluta Molar: ' + (WaterOverMouse.molDensityVapor / Air.Density * Screen.SelectedHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
                 aux += 20;
                 text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / MassDensityAir).toFixed(2) + ' kJ/kg', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
@@ -248,7 +248,7 @@ function AnimationsOverTheMouse(){
     if(SizeOfCircle > 8){IsCircleIncreasing = false}
     if(SizeOfCircle < 0){IsCircleIncreasing = true}
     circle(mouseX, mouseY, 13 + SizeOfCircle);
-    text((Screen.SelectedHumidity*100).toFixed(1) + ' %', mouseX + 10, mouseY - 10);
+    text((Screen.SelectedHumidity).toFixed(1) + ' %', mouseX + 10, mouseY - 10);
     text((WaterOverMouse.Temperature-273.15).toFixed(2) + ' °C', mouseX + 10, Screen.YCanvas - 10);
     text(WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', Screen.XCanvas-108, mouseY - 10);
 }
