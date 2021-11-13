@@ -1,6 +1,7 @@
 let DryGas = new FlowStream();
 let WetGas = new FlowStream();
 let aux;
+let SumOfComponents=100;
 let Background = [];
 let webButtons = [];
 let IsCircleIncreasing = false;
@@ -106,6 +107,37 @@ function draw(){
     MoveToTheRequestedRange();
     if(webButtons[0].activated){
         image(Background[1],0,0);
+        SumOfComponents = 0;
+        SumOfComponents += UpdateComponent(inpMethane);
+        SumOfComponents += UpdateComponent(inpNitrogen);
+        SumOfComponents += UpdateComponent(inpCarbonDioxide);
+        SumOfComponents += UpdateComponent(inpEthane);
+        SumOfComponents += UpdateComponent(inpPropane);
+        SumOfComponents += UpdateComponent(inpIsoButane);
+        SumOfComponents += UpdateComponent(inpnButane);
+        SumOfComponents += UpdateComponent(inpIsopentane);
+        SumOfComponents += UpdateComponent(inpnPentane);
+        SumOfComponents += UpdateComponent(inpnHexane);
+        SumOfComponents += UpdateComponent(inpnHeptane);
+        SumOfComponents += UpdateComponent(inpnOctane);
+        SumOfComponents += UpdateComponent(inpnNonane);
+        SumOfComponents += UpdateComponent(inpnDecane);
+        SumOfComponents += UpdateComponent(inpHydrogen);
+        SumOfComponents += UpdateComponent(inpOxygen);
+        SumOfComponents += UpdateComponent(inpCarbonMonoxide);
+        SumOfComponents += UpdateComponent(inpHydrogenSulfide);
+        SumOfComponents += UpdateComponent(inpHelium);
+        SumOfComponents += UpdateComponent(inpArgon);
+        push();
+            textSize(25);
+            textStyle(BOLD);
+            fill([0,0,0]);
+            if(SumOfComponents < 1.25){
+                text(SumOfComponents.toFixed(3),575,674);
+            }else{
+                text(SumOfComponents.toFixed(1),575,674);
+            }
+        pop();
     }else{
         image(Background[0],0,0);
             // Draw iso relative humidity
@@ -205,7 +237,7 @@ function draw(){
             WetGas.x[20] = DryGas.x[20];
             WetGas.x[21] = DryGas.x[21];
             WetGas.addWater(AbsoluteMolarHumidity * 0.01);
-            let SumOfComponents=0;
+            SumOfComponents=0;
             for(let i=1; i <= 21; i++){
                 SumOfComponents=SumOfComponents+WetGas.x[i];
             }

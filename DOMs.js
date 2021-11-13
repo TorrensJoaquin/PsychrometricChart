@@ -225,7 +225,7 @@ function FromDOMsToX(){
     DryGas.x[20]=UpdateComponent(inpHelium);
     DryGas.x[21]=UpdateComponent(inpArgon);
     //Normalization
-    let SumOfComponents=0;
+    SumOfComponents=0;
     for(let i=1; i <= 21; i++){
         SumOfComponents=SumOfComponents+DryGas.x[i];
     }
