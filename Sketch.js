@@ -257,16 +257,15 @@ function draw(){
                 aux += 20;
                 text('Humedad Absoluta Molar: ' + (AbsoluteMolarHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
                 aux += 20;
-                //kJ/kg
-                text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / WetGas.MassDensity).toFixed(2) + ' kJ/kg', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(2) + ' kJ/kg gas seco', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
-                text('Entropia de Vaporización: ' + (WaterOverMouse.EntropyVaporization * WaterOverMouse.DensityVapor / WetGas.MassDensity).toFixed(2) + ' kJ/[kg K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                text('Entropia de Vaporización: ' + (WaterOverMouse.EntropyVaporization * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(2) + ' kJ/[kg gas seco K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
                 text('Temperatura: ' + (WaterOverMouse.Temperature-273.15).toFixed(2) + ' °C', 10, aux);
                 aux += 20;
-                text('Presión: ' + DryGas.Pressure.toFixed(1) + ' kPa', 10, aux);
+                text('Presión: ' + WetGas.Pressure.toFixed(1) + ' kPa', 10, aux);
                 aux += 20;
-                text('Densidad: ' + DryGas.MassDensity.toFixed(3) + ' kg/m3', 10, aux);
+                text('Densidad: ' + WetGas.MassDensity.toFixed(3) + ' kg/m3', 10, aux);
                 aux += 20;
                 text('Velocidad del Sonido: ' + WetGas.SpeedOfSound.toFixed(2) + ' m/s', 10, aux);
                 aux += 20;
