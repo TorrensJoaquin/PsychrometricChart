@@ -19,12 +19,12 @@ let Screen = {
     densMax: 0.03,    //kg/m3
     densMinSP: 0,       //kg/m3
     densMaxSP: 0.03,    //kg/m3
-    densVelMax : 0.0003,
+    densVelMax : 0.003,
     tempMin: 273.15-10,  //°K
     tempMax: 273.15+55,  //°K
     tempMinSP: -10,  //°C
     tempMaxSP: 55,  //°C
-    tempVelMax: 0.3,
+    tempVelMax: 0.5,
     SelectedHumidity : 0
 }
 function MoveToTheRequestedRange(){
