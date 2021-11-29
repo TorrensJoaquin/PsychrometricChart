@@ -450,6 +450,7 @@ function ButtonsConfiguration() {
 }
 function mouseWheel(event) {
     let newPressure = (parseFloat(inpPressure.value()) - event.delta * 0.01).toFixed(2);
-    inpMaxDensity.value(Screen.densMaxSP * newPressure / inpPressure.value()); 
+    inpMaxDensity.value(Screen.densMaxSP * newPressure / inpPressure.value());
+    inpMinDensity.value(Screen.densMinSP * newPressure / inpPressure.value());
     inpPressure.value(newPressure);
 }
