@@ -22,7 +22,7 @@ let Screen = {
     densVelMax: 0.003,
     tempMin: 273.15 - 10,  //°K
     tempMax: 273.15 + 55,  //°K
-    tempMinSP: -10,  //°C
+    tempMinSP: -10, //°C
     tempMaxSP: 55,  //°C
     tempVelMax: 0.5,
     SelectedHumidity: 0
