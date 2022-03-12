@@ -203,6 +203,7 @@ function draw() {
             WaterOverMouse.EnthalpyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
             WaterOverMouse.EntropyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EntropyVaporization);
             // Vapor if the Relative Humidity were 100%
+            WaterOverMouse.WetBulbTemperature = Vapor.GetWetBulbTemperature(WaterOverMouse.DensityVapor);
             WaterSaturation.Temperature = WaterOverMouse.Temperature;
             WaterSaturation.Pressure = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.Pressure);
             WaterSaturation.DensityVapor = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.DensityVapor);
@@ -239,10 +240,11 @@ function draw() {
             WetGas.addWater(AbsoluteMolarHumidity * 0.01);
             SumOfComponents = 0;
             for (let i = 1; i <= 21; i++) {
-                SumOfComponents = SumOfComponents + WetGas.x[i];
+                SumOfComponents += WetGas.x[i];
             }
-            for (let i = 1; i <= 21; i++) {
-                WetGas.x[i] = WetGas.x[i] / SumOfComponents;
+            SumOfComponents = 1/SumOfComponents;
+            for (let i = 1; i <= 21; i++){
+                WetGas.x[i] = WetGas.x[i]*SumOfComponents;
             }
             WetGas.CalculateDensity(1);
             WetGas.MassDensity = WetGas.Density * WetGas.MolarMass;
@@ -268,6 +270,8 @@ function draw() {
                 text('Densidad: ' + WetGas.MassDensity.toFixed(3) + ' kg/m3', 10, aux);
                 aux += 20;
                 text('Velocidad del Sonido: ' + WetGas.SpeedOfSound.toFixed(2) + ' m/s', 10, aux);
+                aux += 20;
+                text('Temperatura de bulbo humedo: ' + (WaterOverMouse.WetBulbTemperature-273.15).toFixed(1) + '°C', 10, aux);
                 aux += 20;
                 text('Composición: ', 10, aux);
                 aux += 20;
@@ -307,13 +311,19 @@ function UploadTheInputs() {
     Screen.densMinSP = UpdateComponent(inpMinDensity);
     Screen.densMaxSP = UpdateComponent(inpMaxDensity);
 }
-function AnimationsOverTheMouse() {
+function AnimationsOverTheMouse(){
+    push();
+    strokeWeight(2+SizeOfCircle*0.25);
     line(mouseX, mouseY, mouseX, Screen.YCanvas);
+    pop();
+    push();
+    strokeWeight(2+(8-SizeOfCircle)*0.25);
     line(Screen.XCanvas, mouseY, mouseX, mouseY);
-    if (IsCircleIncreasing) {
-        SizeOfCircle = SizeOfCircle + 0.1;
-    } else {
-        SizeOfCircle = SizeOfCircle - 0.1;
+    pop();
+    if(IsCircleIncreasing){
+        SizeOfCircle += 0.1;
+    }else{
+        SizeOfCircle -= 0.1;
     }
     if (SizeOfCircle > 8) { IsCircleIncreasing = false }
     if (SizeOfCircle < 0) { IsCircleIncreasing = true }
