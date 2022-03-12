@@ -71,7 +71,7 @@ function MoveToTheRequestedRange() {
 function preload() {
     Background[0] = loadImage('Images/Background.png');
     Background[1] = loadImage('Images/Background_x.png');
-    webButtons[0] = new WebButton([1050, 0], loadImage('Images/ChangeGasComposition_A.jpg'), loadImage('Images/ChangeGasComposition_B.jpg'), loadImage('Images/ChangeGasComposition_C.jpg'));
+    webButtons[0] = new WebButton([750, 0], loadImage('Images/ChangeGasComposition_A.jpg'), loadImage('Images/ChangeGasComposition_B.jpg'), loadImage('Images/ChangeGasComposition_C.jpg'));
     webButtons[1] = new WebButton([380, 620], loadImage('Images/Clear_A.jpg'), loadImage('Images/Clear_B.jpg'), loadImage('Images/Clear_C.jpg'));
     webButtons[2] = new WebButton([430, 230], loadImage('Images/Update_Gas_Composition_A.jpg'), loadImage('Images/Update_Gas_Composition_B.jpg'), loadImage('Images/Update_Gas_Composition_C.jpg'));
 }
@@ -83,7 +83,7 @@ function setup() {
     // DOM Inputs
     inpPressure = createInput(DryGas.Pressure.toString());
     inpPressure.size(40, 30);
-    inpPressure.position(805, 33);
+    inpPressure.position(1100, 33);
     inpMinTemperarure = createInput(Screen.tempMinSP.toString());
     inpMinTemperarure.size(30, 15);
     inpMinTemperarure.position(21, 751);
