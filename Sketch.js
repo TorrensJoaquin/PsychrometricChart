@@ -320,17 +320,31 @@ function AnimationsOverTheMouse(){
     strokeWeight(2+(8-SizeOfCircle)*0.25);
     line(Screen.XCanvas, mouseY, mouseX, mouseY);
     pop();
+    DrawIsohumidityCoolingLine();
     if(IsCircleIncreasing){
         SizeOfCircle += 0.1;
     }else{
         SizeOfCircle -= 0.1;
     }
-    if (SizeOfCircle > 8) { IsCircleIncreasing = false }
-    if (SizeOfCircle < 0) { IsCircleIncreasing = true }
+    if (SizeOfCircle > 8){IsCircleIncreasing = false}
+    if (SizeOfCircle < 0){IsCircleIncreasing = true }
     circle(mouseX, mouseY, 13 + SizeOfCircle);
     text((Screen.SelectedHumidity).toFixed(1) + ' %', mouseX + 10, mouseY - 10);
     text((WaterOverMouse.Temperature - 273.15).toFixed(2) + ' °C', mouseX + 10, Screen.YCanvas - 10);
     text(WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', Screen.XCanvas - 108, mouseY - 10);
+}
+function DrawIsohumidityCoolingLine(){
+    let TemperatureX = map(WaterOverMouse.WetBulbTemperature,Screen.tempMin,Screen.tempMax,Screen.Xmin,Screen.Xmax);
+    push();
+    strokeWeight(0.5);
+    stroke(50,50,50+SizeOfCircle*8);
+    line(mouseX, mouseY, TemperatureX, mouseY);
+    line(TemperatureX, mouseY, TemperatureX, Screen.YCanvas);
+    if((WaterOverMouse.Temperature - WaterOverMouse.WetBulbTemperature) > (Screen.tempMax - Screen.tempMin)*0.1){
+        fill(80);
+        text((WaterOverMouse.WetBulbTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
+    }
+    pop();
 }
 function UpdateComponent(ComponentOfDOM) {
     if (ComponentOfDOM.value() == '') {
