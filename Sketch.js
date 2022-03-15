@@ -203,7 +203,7 @@ function draw() {
             WaterOverMouse.EnthalpyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
             WaterOverMouse.EntropyVaporization = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EntropyVaporization);
             // Vapor if the Relative Humidity were 100%
-            WaterOverMouse.WetBulbTemperature = Vapor.GetWetBulbTemperature(WaterOverMouse.DensityVapor);
+            WaterOverMouse.DewTemperature = Vapor.GetDewTemperature(WaterOverMouse.DensityVapor);
             WaterSaturation.Temperature = WaterOverMouse.Temperature;
             WaterSaturation.Pressure = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.Pressure);
             WaterSaturation.DensityVapor = RegretionByPoints(WaterSaturation.Temperature, Vapor.Temperature, Vapor.DensityVapor);
@@ -249,7 +249,7 @@ function draw() {
             WetGas.CalculateDensity(1);
             WetGas.MassDensity = WetGas.Density * WetGas.MolarMass;
             //
-            if (Screen.SelectedHumidity < 100.9) {
+            if(Screen.SelectedHumidity < 100.9){
                 aux = 115;
                 text('Humedad Relativa: ' + (Screen.SelectedHumidity).toFixed(1) + ' %', 10, aux);
                 aux += 20;
@@ -259,9 +259,9 @@ function draw() {
                 aux += 20;
                 text('Humedad Absoluta Molar: ' + (AbsoluteMolarHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);
                 aux += 20;
-                text('Entalpia de Vaporización: ' + (WaterOverMouse.EnthalpyVaporization * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(2) + ' kJ/kg gas seco', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                text('Entalpia de Vaporización: ' + (WetGas.H * WetGas.MassDensity / (DryGas.MassDensity * WetGas.MolarMass)).toFixed(2) + ' kJ/kg gas seco', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
-                text('Entropia de Vaporización: ' + (WaterOverMouse.EntropyVaporization * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(2) + ' kJ/[kg gas seco K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
+                text('Entropia de Vaporización: ' + (WetGas.S * WetGas.MassDensity / (DryGas.MassDensity * WetGas.MolarMass)).toFixed(2) + ' kJ/[kg gas seco K]', 10, aux); // KJ/kg H2O * kg H2O/m3 / kg Aire/m3
                 aux += 20;
                 text('Temperatura: ' + (WaterOverMouse.Temperature - 273.15).toFixed(2) + ' °C', 10, aux);
                 aux += 20;
@@ -271,7 +271,7 @@ function draw() {
                 aux += 20;
                 text('Velocidad del Sonido: ' + WetGas.SpeedOfSound.toFixed(2) + ' m/s', 10, aux);
                 aux += 20;
-                text('Temperatura de bulbo humedo: ' + (WaterOverMouse.WetBulbTemperature-273.15).toFixed(1) + '°C', 10, aux);
+                text('Temperatura de rocío: ' + (WaterOverMouse.DewTemperature-273.15).toFixed(1) + '°C', 10, aux);
                 aux += 20;
                 text('Composición: ', 10, aux);
                 aux += 20;
@@ -333,19 +333,19 @@ function AnimationsOverTheMouse(){
     text((WaterOverMouse.Temperature - 273.15).toFixed(2) + ' °C', mouseX + 10, Screen.YCanvas - 10);
     text(WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', Screen.XCanvas - 108, mouseY - 10);
     function DrawIsohumidityCoolingLine(){
-        let TemperatureX = map(WaterOverMouse.WetBulbTemperature,Screen.tempMin,Screen.tempMax,Screen.Xmin,Screen.Xmax);
-        if((WaterOverMouse.Temperature-WaterOverMouse.WetBulbTemperature) > (Screen.tempMax-Screen.tempMin)*0.1){
+        let TemperatureX = map(WaterOverMouse.DewTemperature,Screen.tempMin,Screen.tempMax,Screen.Xmin,Screen.Xmax);
+        if((WaterOverMouse.Temperature-WaterOverMouse.DewTemperature) > (Screen.tempMax-Screen.tempMin)*0.1){
             push();
             strokeWeight(0.5);
             stroke(50,50,50+SizeOfCircle*8);
             line(mouseX, mouseY, TemperatureX, mouseY);
             line(TemperatureX, mouseY, TemperatureX, Screen.YCanvas);    
             fill(80);
-            text((WaterOverMouse.WetBulbTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
+            text((WaterOverMouse.DewTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
             pop();
             return;
         }
-        if((WaterOverMouse.Temperature-WaterOverMouse.WetBulbTemperature) < (Screen.tempMax-Screen.tempMin)*0.02){
+        if((WaterOverMouse.Temperature-WaterOverMouse.DewTemperature) < (Screen.tempMax-Screen.tempMin)*0.02){
             return;
         }
         push();
@@ -353,9 +353,9 @@ function AnimationsOverTheMouse(){
         stroke(50,50,50+SizeOfCircle*8);
         line(mouseX, mouseY, TemperatureX, mouseY);
         line(TemperatureX, mouseY, TemperatureX, Screen.YCanvas);
-        fill(WaterOverMouse.Temperature - WaterOverMouse.WetBulbTemperature);
-        textSize((WaterOverMouse.Temperature - WaterOverMouse.WetBulbTemperature)*2)
-        text((WaterOverMouse.WetBulbTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
+        fill(WaterOverMouse.Temperature - WaterOverMouse.DewTemperature);
+        textSize((WaterOverMouse.Temperature - WaterOverMouse.DewTemperature)*2)
+        text((WaterOverMouse.DewTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
         pop();
         return;
     }
