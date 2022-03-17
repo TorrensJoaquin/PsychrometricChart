@@ -3,6 +3,7 @@ class WaterProperties {
     this.Pressure = undefined;
     this.Temperature = undefined;
     this.DewTemperature = undefined;
+    this.WetBulbTemperature = undefined;
     this.DensityLiquid = undefined;
     this.DensityVapor = undefined;
     this.molDensityLiquid= undefined;
@@ -68,8 +69,8 @@ let Vapor = {
       EnthalpyVaporization = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
       Gas.Temperature = middleTemperature;
       Gas.CalculateDensity(1);
-      Gas.MassDensity = DryGas.Density * DryGas.MolarMass;
-      EnthalpyVaporSaturation = EnthalpyVaporization * DensityVaporSaturation / DryGas.MassDensity;
+      Gas.MassDensity = Gas.Density * Gas.MolarMass;
+      EnthalpyVaporSaturation = EnthalpyVaporization * DensityVaporSaturation / Gas.MassDensity;
       if(EnthalpyVapor > EnthalpyVaporSaturation){
         lowerTemperature = middleTemperature;
       }else{
@@ -78,9 +79,37 @@ let Vapor = {
       middleTemperature = (lowerTemperature + higherTemperature)*0.5;
     }
     return middleTemperature;
+  },
+  GetWetBulbTemperature(Enthalpy, Gas){
+    let lowerTemperature = 253;
+    let middleTemperature = 460.048;
+    let higherTemperature = 647.096;
+    let WaterSatDensityVapor = 0;
+    let AbsMolHumidity = 0;
+    let ActualEnthalpy = 0;
+    let Gas1 = new FlowStream();
+    let Gas2 = new FlowStream();
+    Gas1 = Gas.CopyAsValue();
+    for(let i = 0; i < 40; i++){
+        // Gas without taking in account tha vapor content.
+        Gas1.Temperature = middleTemperature;
+        Gas1.CalculateDensity(1);
+        Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
+        // Gas taking in account the vapor content.
+        WaterSatDensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor);
+        AbsMolHumidity = WaterSatDensityVapor / Gas1.Density * 0.01;
+        Gas2 = WetGasCalculations(Gas1, AbsMolHumidity);
+        ActualEnthalpy = Gas2.H / Gas2.MolarMass;
+        if(Enthalpy > ActualEnthalpy){
+            lowerTemperature = middleTemperature;
+        }else{
+            higherTemperature = middleTemperature;
+        }
+        middleTemperature = (lowerTemperature + higherTemperature)*0.5;
+    }
+    return middleTemperature;
   }
 }
-//
 //
 function RegretionByPoints( ValueX, ArrayX, ArrayY){
     // Find the y value of an array of x and y values.

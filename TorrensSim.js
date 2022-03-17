@@ -1453,4 +1453,50 @@ function SetupFlowStreamSimulator(){
     addHydrogensulfide(Hydrogensulfide){this.x[19] = Hydrogensulfide};
     addHelium(Helium){this.x[20] = Helium};
     addArgon(Argon){this.x[21] = Argon};
+    CopyAsValue(){
+      let GasB = new FlowStream;
+      GasB.x[1] = this.x[1]; //mol
+      GasB.x[2] = this.x[2]; //mol
+      GasB.x[3] = this.x[3]; //mol
+      GasB.x[4] = this.x[4]; //mol
+      GasB.x[5] = this.x[5]; //mol
+      GasB.x[6] = this.x[6]; //mol
+      GasB.x[7] = this.x[7]; //mol
+      GasB.x[8] = this.x[8]; //mol
+      GasB.x[9] = this.x[9]; //mol
+      GasB.x[10] = this.x[10]; //mol
+      GasB.x[11] = this.x[11]; //mol
+      GasB.x[12] = this.x[12]; //mol
+      GasB.x[13] = this.x[13]; //mol
+      GasB.x[14] = this.x[14]; //mol
+      GasB.x[15] = this.x[15]; //mol
+      GasB.x[16] = this.x[16]; //mol
+      GasB.x[17] = this.x[17]; //mol
+      GasB.x[18] = this.x[18]; //mol
+      GasB.x[19] = this.x[19]; //mol
+      GasB.x[20] = this.x[20]; //mol
+      GasB.x[21] = this.x[21]; //mol
+      GasB.Pressure = this.Pressure; //KPa
+      GasB.Temperature = this.Temperature; //Kelvin
+      GasB.MolarMass = this.MolarMass; //g/mol
+      GasB.Density = this.Density; //mol/l
+      GasB.CompressibilityFactor = this.CompressibilityFactor;
+      GasB.dPdD = this.dPdD;
+      GasB.d2PdD2 = this.d2PdD2;
+      GasB.d2PdTD = this.d2PdTD;
+      GasB.dPdT = this.dPdT;
+      GasB.U = this.U; //J/mol
+      GasB.H = this.H; //J/mol
+      GasB.S = this.S; //J/mol
+      GasB.Cv = this.Cv;
+      GasB.Cp = this.Cp;
+      GasB.SpeedOfSound = this.SpeedOfSound;
+      GasB.G = this.G;
+      GasB.JouleThomson = this.JouleThomson; //K/kPa
+      GasB.IsentropicExponent = this.IsentropicExponent;
+      GasB.A = this.A;
+      GasB.ierr = this.ierr;
+      GasB.herr = this.herr;
+      return GasB;
+    }
 }
