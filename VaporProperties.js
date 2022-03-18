@@ -102,7 +102,6 @@ let Vapor = {
         // Vapor Enthalpy.
         WaterContributionToEnthalpy = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
         // Balance
-
         ActualEnthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
         if(Enthalpy > ActualEnthalpy){
             lowerTemperature = middleTemperature;
@@ -112,6 +111,91 @@ let Vapor = {
         middleTemperature = (lowerTemperature + higherTemperature)*0.5;
     }
     return middleTemperature;
+  },
+  GetTemperature(Enthalpy, RH, Gas){
+    let lowerTemperature = 253;
+    let middleTemperature = 460.048;
+    let higherTemperature = 647.096;
+    let AirContributionToEnthalpy = 0;
+    let WaterContributionToEnthalpy = 0;
+    let ActualEnthalpy = 0;
+    let DensityVapor = 0;
+    let Gas1 = new FlowStream();
+    Gas1 = Gas.CopyAsValue();
+    for(let i = 0; i < 40; i++){
+        // Dry Gas Enthalpy.
+        Gas1.Temperature = middleTemperature;
+        Gas1.CalculateDensity(1);
+        Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        // Absolute Mass Humidity if Saturation is 100%
+        DensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor) * RH;
+        AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
+        // Vapor Enthalpy.
+        WaterContributionToEnthalpy = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+        // Balance
+        ActualEnthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
+        if(Enthalpy > ActualEnthalpy){
+            lowerTemperature = middleTemperature;
+        }else{
+            higherTemperature = middleTemperature;
+        }
+        middleTemperature = (lowerTemperature + higherTemperature)*0.5;
+    }
+    return middleTemperature;
+  },
+  GetRelativeHumidity(Enthalpy, Temperature, Gas){
+    let lowerRH = 0;
+    let middleRH = 0.5;
+    let higherRH = 1;
+    let AirContributionToEnthalpy = 0;
+    let WaterContributionToEnthalpy = 0;
+    let ActualEnthalpy = 0;
+    let DensityVapor = 0;
+    let Gas1 = new FlowStream();
+    Gas1 = Gas.CopyAsValue();
+    for(let i = 0; i < 40; i++){
+        // Dry Gas Enthalpy.
+        Gas1.Temperature = Temperature;
+        Gas1.CalculateDensity(1);
+        Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        // Absolute Mass Humidity if Saturation is 100%
+        DensityVapor = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.DensityVapor) * middleRH;
+        AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
+        // Vapor Enthalpy.
+        WaterContributionToEnthalpy = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+        // Balance
+        ActualEnthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
+        if(Enthalpy > ActualEnthalpy){
+            lowerRH = middleRH;
+        }else{
+            higherRH = middleRH;
+        }
+        middleRH = (lowerRH + higherRH)*0.5;
+    }
+    return middleRH;
+  },
+  GetEnthalpy(Temperature, RH, Gas){
+    let AirContributionToEnthalpy = 0;
+    let WaterContributionToEnthalpy = 0;
+    let ActualEnthalpy = 0;
+    let DensityVapor = 0;
+    let Gas1 = new FlowStream();
+    Gas1 = Gas.CopyAsValue();
+    // Dry Gas Enthalpy.
+    Gas1.Temperature = Temperature;
+    Gas1.CalculateDensity(1);
+    Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
+    AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+    // Absolute Mass Humidity if Saturation is 100%
+    DensityVapor = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.DensityVapor) * RH;
+    AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
+    // Vapor Enthalpy.
+    WaterContributionToEnthalpy = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+    // Balance
+    ActualEnthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
+    return ActualEnthalpy;
   }
 }
 //
