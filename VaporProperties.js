@@ -84,22 +84,26 @@ let Vapor = {
     let lowerTemperature = 253;
     let middleTemperature = 460.048;
     let higherTemperature = 647.096;
-    let WaterSatDensityVapor = 0;
-    let AbsMolHumidity = 0;
+    let AirContributionToEnthalpy = 0;
+    let WaterContributionToEnthalpy = 0;
     let ActualEnthalpy = 0;
+    let DensityVapor = 0;
     let Gas1 = new FlowStream();
-    let Gas2 = new FlowStream();
     Gas1 = Gas.CopyAsValue();
     for(let i = 0; i < 40; i++){
-        // Gas without taking in account tha vapor content.
+        // Dry Gas Enthalpy.
         Gas1.Temperature = middleTemperature;
         Gas1.CalculateDensity(1);
         Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
-        // Gas taking in account the vapor content.
-        WaterSatDensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor);
-        AbsMolHumidity = WaterSatDensityVapor / Gas1.Density * 0.01;
-        Gas2 = WetGasCalculations(Gas1, AbsMolHumidity);
-        ActualEnthalpy = Gas2.H / Gas2.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        // Absolute Mass Humidity if Saturation is 100%
+        DensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor);
+        AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
+        // Vapor Enthalpy.
+        WaterContributionToEnthalpy = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+        // Balance
+
+        ActualEnthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
         if(Enthalpy > ActualEnthalpy){
             lowerTemperature = middleTemperature;
         }else{

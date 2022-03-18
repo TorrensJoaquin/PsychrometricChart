@@ -209,23 +209,33 @@ function draw() {
             DryGas.MassDensity = DryGas.Density * DryGas.MolarMass;
             // Gas taking in account tha vapor content.
             AbsoluteMolarHumidity = WaterSaturation.molDensityVapor / DryGas.Density * Screen.SelectedHumidity;
+            let AbsoluteMassHumidity = WaterOverMouse.DensityVapor / DryGas.MassDensity;
             WetGas = WetGasCalculations(DryGas, AbsoluteMolarHumidity);
-            let Enthalpy = WetGas.H  / WetGas.MolarMass;
-            let Entropy = WetGas.S  / WetGas.MolarMass;
+            // Enthalpy
+                let AirContributionToEnthalpy = DryGas.H / DryGas.MolarMass;
+                let AirContributionToEntropy = DryGas.H / DryGas.MolarMass;
+                // Vapor Enthalpy.
+                let WaterContributionToEnthalpy = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+                let WaterContributionToEntropy = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
+                // Balance
+                Enthalpy = AirContributionToEnthalpy + WaterContributionToEnthalpy * AbsoluteMassHumidity;
+                Entropy = AirContributionToEntropy + WaterContributionToEntropy * AbsoluteMassHumidity;
+            //
             WaterOverMouse.WetBulbTemperature = Vapor.GetWetBulbTemperature(Enthalpy, DryGas);
             if(Screen.SelectedHumidity < 100.9){
                 aux = 115;
+                text('Temperatura: ' + (WaterOverMouse.Temperature - 273.15).toFixed(2) + ' °C', 10, aux);aux += 20;
+                text('Temperatura de rocío: ' + (WaterOverMouse.DewTemperature-273.15).toFixed(1) + '°C', 10, aux);aux += 20;
+                text('Temperatura de bulbo húmedo: ' + (WaterOverMouse.WetBulbTemperature-273.15).toFixed(1) + '°C', 10, aux);aux += 20;
                 text('Humedad Relativa: ' + (Screen.SelectedHumidity).toFixed(1) + ' %', 10, aux);aux += 20;
-                text('Humedad Absoluta: ' + (1000 * WaterOverMouse.DensityVapor / DryGas.MassDensity).toFixed(3) + ' g agua / kg gas seco', 10, aux);aux += 20;
+                text('Humedad Absoluta: ' + (1000 * AbsoluteMassHumidity).toFixed(3) + ' g agua / kg gas seco', 10, aux);aux += 20;
                 text('Humedad Absoluta Volumetrica: ' + WaterOverMouse.DensityVapor.toFixed(3) + ' kg Agua/m3', 10, aux);aux += 20;
                 text('Humedad Absoluta Molar: ' + (AbsoluteMolarHumidity).toFixed(3) + '% mol agua / mol gas seco', 10, aux);aux += 20;
                 text('Entalpia: ' + (Enthalpy).toFixed(2) + ' kJ/kg gas seco', 10, aux);aux += 20;
                 text('Entropia: ' + (Entropy).toFixed(2) + ' kJ/[kg gas seco K]', 10, aux);aux += 20;
-                text('Temperatura: ' + (WaterOverMouse.Temperature - 273.15).toFixed(2) + ' °C', 10, aux);aux += 20;
                 text('Presión: ' + WetGas.Pressure.toFixed(1) + ' kPa', 10, aux);aux += 20;
                 text('Densidad: ' + WetGas.MassDensity.toFixed(3) + ' kg/m3', 10, aux);aux += 20;
                 text('Velocidad del Sonido: ' + WetGas.SpeedOfSound.toFixed(2) + ' m/s', 10, aux);aux += 20;
-                text('Temperatura de rocío: ' + (WaterOverMouse.DewTemperature-273.15).toFixed(1) + '°C', 10, aux);aux += 20;
                 text('Composición: ', 10, aux);aux += 20;
                 WriteElementIfExist('Metano', 1);
                 WriteElementIfExist('Nitrogeno', 2);
@@ -273,6 +283,7 @@ function AnimationsOverTheMouse(){
     line(Screen.XCanvas, mouseY, mouseX, mouseY);
     pop();
     DrawIsohumidityCoolingLine();
+    DrawIsoEntalphyCoolingLine();
     if(IsCircleIncreasing){
         SizeOfCircle += 0.1;
     }else{
@@ -310,6 +321,15 @@ function AnimationsOverTheMouse(){
         text((WaterOverMouse.DewTemperature - 273.15).toFixed(2) + ' °C', TemperatureX + 10, Screen.YCanvas - 10);
         pop();
         return;
+    }
+    function DrawIsoEntalphyCoolingLine(){
+        let DensityVapor = RegretionByPoints(WaterOverMouse.WetBulbTemperature, Vapor.Temperature, Vapor.DensityVapor);
+        let XScreen = map(WaterOverMouse.WetBulbTemperature,Screen.tempMin,Screen.tempMax,Screen.Xmin,Screen.Xmax);
+        let YScreen = map(DensityVapor, Screen.densMin, Screen.densMax, Screen.Ymax, Screen.Ymin);
+        push();
+        line(mouseX, mouseY, XScreen, YScreen);
+        text((WaterOverMouse.WetBulbTemperature - 273.15).toFixed(2) + ' °C', XScreen - 30, YScreen - 30);
+        pop();
     }
 }
 function UpdateComponent(ComponentOfDOM) {
