@@ -14,6 +14,22 @@ class WaterProperties {
     this.VolumeVapor = undefined;
     this.MolarMass = 18.01528; //kg/kmol
   }
+  CopyAsValue(){
+      let NewWater = new WaterProperties();
+      NewWater.Pressure = this.Pressure;
+      NewWater.Temperature = this.Temperature;
+      NewWater.DewTemperature = this.DewTemperature;
+      NewWater.WetBulbTemperature = this.WetBulbTemperature;
+      NewWater.DensityLiquid = this.DensityLiquid;
+      NewWater.DensityVapor = this.DensityVapor;
+      NewWater.molDensityLiquid = this.molDensityLiquid;
+      NewWater.molDensityVapor = this.molDensityVapor;
+      NewWater.EnthalpyVaporization = this.EnthalpyVaporization;
+      NewWater.EntropyVaporization = this.EntropyVaporization;
+      NewWater.VolumeLiquid = this.VolumeLiquid;
+      NewWater.VolumeVapor = this.VolumeVapor;
+      NewWater.MolarMass = this.MolarMass;  
+  }
 };
 let Vapor = {
   // KPa
@@ -95,7 +111,7 @@ let Vapor = {
         Gas1.Temperature = middleTemperature;
         Gas1.CalculateDensity(1);
         Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
-        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass + 25.5462508188823;
         // Absolute Mass Humidity if Saturation is 100%
         DensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor);
         AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
@@ -127,7 +143,7 @@ let Vapor = {
         Gas1.Temperature = middleTemperature;
         Gas1.CalculateDensity(1);
         Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
-        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass + 25.5462508188823;
         // Absolute Mass Humidity if Saturation is 100%
         DensityVapor = RegretionByPoints(middleTemperature, Vapor.Temperature, Vapor.DensityVapor) * RH;
         AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
@@ -159,7 +175,7 @@ let Vapor = {
         Gas1.Temperature = Temperature;
         Gas1.CalculateDensity(1);
         Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
-        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+        AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass + 25.5462508188823;
         // Absolute Mass Humidity if Saturation is 100%
         DensityVapor = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.DensityVapor) * middleRH;
         AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;
@@ -187,7 +203,7 @@ let Vapor = {
     Gas1.Temperature = Temperature;
     Gas1.CalculateDensity(1);
     Gas1.MassDensity = Gas1.Density * Gas1.MolarMass;
-    AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass;
+    AirContributionToEnthalpy = Gas1.H / Gas1.MolarMass + 25.5462508188823;
     // Absolute Mass Humidity if Saturation is 100%
     DensityVapor = RegretionByPoints(Temperature, Vapor.Temperature, Vapor.DensityVapor) * RH;
     AbsoluteMassHumidity = DensityVapor/Gas1.MassDensity;

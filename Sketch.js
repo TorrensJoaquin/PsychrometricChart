@@ -212,7 +212,7 @@ function draw() {
             let AbsoluteMassHumidity = WaterOverMouse.DensityVapor / DryGas.MassDensity;
             WetGas = WetGasCalculations(DryGas, AbsoluteMolarHumidity);
             // Enthalpy
-                let AirContributionToEnthalpy = DryGas.H / DryGas.MolarMass;
+                let AirContributionToEnthalpy = DryGas.H / DryGas.MolarMass + 25.5462508188823;
                 let AirContributionToEntropy = DryGas.H / DryGas.MolarMass;
                 // Vapor Enthalpy.
                 let WaterContributionToEnthalpy = RegretionByPoints(WaterOverMouse.Temperature, Vapor.Temperature, Vapor.EnthalpyVaporization);
