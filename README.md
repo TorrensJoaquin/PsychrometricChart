@@ -6,6 +6,7 @@ Online psychrometric chart with high definition, variable pressure and compositi
 * All the normal uses of every other psychometric chart. (but better looking)  
 * Your own psychometric chart if you don't live at 0 meters above sea level.  
 * You want to calculate the humidity on a gas using a cheap wet bulb method.  
+* You want to take conclusions on your gas quality with the speed of sound given by a flowmeter.  
 
 ## More information about the algorithm.
 
